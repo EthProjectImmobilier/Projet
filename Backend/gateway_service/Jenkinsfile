@@ -20,15 +20,19 @@ pipeline {
     }
     stage('Build (Maven)') {
       steps {
-        sh './mvnw -B -DskipTests clean package'
+        dir('Backend/gateway_service') {
+          sh './mvnw -B -DskipTests clean package'
+        }
       }
     }
     stage('Build Docker image') {
       steps {
-        script {
-          def imageFull = env.DOCKER_REGISTRY?.trim() ? "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.TAG}" : "${env.IMAGE_NAME}:${env.TAG}"
-          sh "docker build -t ${imageFull} ."
-          env.IMAGE_FULL = imageFull
+        dir('Backend/gateway_service') {
+          script {
+            def imageFull = env.DOCKER_REGISTRY?.trim() ? "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.TAG}" : "${env.IMAGE_NAME}:${env.TAG}"
+            sh "docker build -t ${imageFull} ."
+            env.IMAGE_FULL = imageFull
+          }
         }
       }
     }
