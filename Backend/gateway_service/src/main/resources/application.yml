@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:0828f9e92381bffe0ffa1459bb46ad2eb50d67bfb99595090c2d034153440857}
+  services:
+    user-service:
+      uri: ${USER_SERVICE_URI:http://localhost:8081}
+    property-service:
+      uri: ${PROPERTY_SERVICE_URI:http://localhost:8082}
+    booking-service:
+      uri: ${BOOKING_SERVICE_URI:http://localhost:8083}
+    payment-service:
+      uri: ${PAYMENT_SERVICE_URI:http://localhost:8084}
+    blockchain-service:
+      uri: ${BLOCKCHAIN_SERVICE_URI:http://localhost:8085}
+    notification-service:
+      uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8086}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+
+eureka:
+  client:
+    enabled: false

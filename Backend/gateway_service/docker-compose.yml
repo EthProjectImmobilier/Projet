@@ -1,0 +1,10 @@
+services:
+  gateway-service:
+    build: .
+    container_name: gateway-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=${JWT_SECRET}
+      - USER_SERVICE_URL=http://host.docker.internal:8081
+    ports:
+      - "8080:8080"

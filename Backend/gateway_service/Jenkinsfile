@@ -1,0 +1,55 @@
+pipeline {
+  /* Utilise un conteneur Maven pour exécuter les étapes Maven.
+     Le conteneur doit avoir accès au socket Docker si vous voulez builder/pusher l'image
+     (args: '-v /var/run/docker.sock:/var/run/docker.sock'). */
+  agent {
+    docker {
+      image 'maven:3.9-eclipse-temurin-21'
+      args '-v /var/run/docker.sock:/var/run/docker.sock'
+    }
+  }
+  environment {
+    IMAGE_NAME = 'gateway_service'
+    TAG = "${env.BUILD_NUMBER ?: 'local'}"
+    DOCKER_REGISTRY = '' // ex: registry.hub.docker.com/moncompte (laisser vide pour ne pas push)
+    DOCKER_CREDENTIALS_ID = '' // credentialsId de type Username with password
+  }
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Build (Maven)') {
+      steps {
+        sh './mvnw -B -DskipTests clean package'
+      }
+    }
+    stage('Build Docker image') {
+      steps {
+        script {
+          def imageFull = env.DOCKER_REGISTRY?.trim() ? "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.TAG}" : "${env.IMAGE_NAME}:${env.TAG}"
+          sh "docker build -t ${imageFull} ."
+          env.IMAGE_FULL = imageFull
+        }
+      }
+    }
+    stage('Push Docker image (optional)') {
+      when { expression { return env.DOCKER_REGISTRY?.trim() } }
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            sh 'echo "$DOCKER_PASS" | docker login docker.io --username "$DOCKER_USER" --password-stdin'
+            sh "docker push ${env.IMAGE_FULL}"
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+    }
+    success {
+      echo "Pipeline succeeded: ${env.IMAGE_FULL ?: env.IMAGE_NAME + ':' + env.TAG }"
+    }
+  }
+}
