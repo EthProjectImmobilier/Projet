@@ -36,7 +36,7 @@ pipeline {
         stage('Test Docker image') {
             steps {
                 script {
-                    bat "docker run -d -p 8085:8080 --name test-user ${env.IMAGE_FULL}"
+                    bat "docker run -d -p 8085:8081 --name test-user ${env.IMAGE_FULL}"
                     sleep 10
                     bat "curl http://localhost:8085/actuator/health"
                     bat "docker rm -f test-user"
