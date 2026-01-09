@@ -11,8 +11,8 @@ pipeline {
   environment {
     IMAGE_NAME = 'gateway_service'
     TAG = "${env.BUILD_NUMBER ?: 'local'}"
-    DOCKER_REGISTRY = '' // ex: registry.hub.docker.com/moncompte (laisser vide pour ne pas push)
-    DOCKER_CREDENTIALS_ID = '' // credentialsId de type Username with password
+    DOCKER_REGISTRY = 'docker.io/khazrisalah2004' // ex: registry.hub.docker.com/moncompte (laisser vide pour ne pas push)
+    DOCKER_CREDENTIALS_ID = 'dockerhub-credentials' // credentialsId de type Username with password
   }
   stages {
     stage('Checkout') {
