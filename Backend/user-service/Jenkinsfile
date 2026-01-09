@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'Java 21' // Nom exact du JDK que tu as configuré dans Jenkins
+    }
+
+    environment {
+        IMAGE_NAME = 'user_service'
+        TAG = "${env.BUILD_NUMBER ?: 'local'}"
+        DOCKER_REGISTRY = 'docker.io/khazrisalah2004'
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+        stage('Build Maven') {
+            steps {
+                dir('Backend/user_service') {
+                    bat '.\\mvnw.cmd -B -DskipTests clean package'
+                }
+            }
+        }
+        stage('Build Docker image') {
+            steps {
+                dir('Backend/user_service') {
+                    script {
+                        def imageFull = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.TAG}"
+                        bat "docker build -t ${imageFull} ."
+                        env.IMAGE_FULL = imageFull
+                    }
+                }
+            }
+        }
+        stage('Test Docker image') {
+            steps {
+                script {
+                    bat "docker run -d -p 8085:8080 --name test-user ${env.IMAGE_FULL}"
+                    sleep 10
+                    bat "curl http://localhost:8085/actuator/health"
+                    bat "docker rm -f test-user"
+                }
+            }
+        }
+        stage('Push Docker image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        bat 'echo %DOCKER_PASS% | docker login docker.io --username %DOCKER_USER% --password-stdin'
+                        bat "docker push ${env.IMAGE_FULL}"
+                    }
+                }
+            }
+        }
+    }
+}
