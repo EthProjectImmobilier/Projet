@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Gateway Service') {
       steps {
-        build job: 'gateway-service-pipeline'
+        build job: 'gateway-service-pipeline', wait: true
       }
     }
 

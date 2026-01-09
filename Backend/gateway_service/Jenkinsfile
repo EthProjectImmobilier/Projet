@@ -15,9 +15,6 @@ pipeline {
     DOCKER_CREDENTIALS_ID = 'dockerhub-credentials' // credentialsId de type Username with password
   }
   stages {
-    stage('Checkout') {
-      steps { checkout scm }
-    }
     stage('Build (Maven)') {
       steps {
         dir('Backend/gateway_service') {
