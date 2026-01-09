@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        jdk 'Java 21' // Nom exact du JDK que tu as configuré dans Jenkins
+    }
 
     environment {
         IMAGE_NAME = 'gateway_service'
