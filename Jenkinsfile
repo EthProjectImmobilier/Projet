@@ -12,6 +12,11 @@ pipeline {
         build job: 'user-service-pipeline', wait: true
       }
     }
+    stage('Property Service') {
+      steps {
+        build job: 'property-service-pipeline', wait: true
+      }
+    }
 
     
   }
