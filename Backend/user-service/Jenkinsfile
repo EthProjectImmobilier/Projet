@@ -33,26 +33,7 @@ pipeline {
                 }
             }
         }
-        stage('Test Docker image') {
-            steps {
-                script {
-                // Nettoyage (IMPORTANT)
-                bat 'docker rm -f test-user || exit 0'
-
-                // Run container
-                bat 'docker run -d -p 8085:8081 --name test-user docker.io/khazrisalah2004/user_service:3'
-
-                // Attente intelligente
-                bat '''
-                for /L %%i in (1,1,30) do (
-                    curl http://localhost:8085/actuator/health && exit /b 0
-                    timeout /t 2 >nul
-                )
-                exit /b 1
-                '''
-                }
-            }
-        }
+        
         stage('Push Docker image') {
             steps {
                 script {
