@@ -1,0 +1,5 @@
+target
+.git
+*.md
+*.log
+.mvn/wrapper/maven-wrapper.jar

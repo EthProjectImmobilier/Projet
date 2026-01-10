@@ -17,6 +17,22 @@ pipeline {
         build job: 'property-service-pipeline', wait: true
       }
     }
+    stage('Booking Service') {
+      steps {
+        build job: 'booking-service-pipeline', wait: true
+      }
+    }
+    stage('Notification Service') {
+      steps {
+        build job: 'notification-service-pipeline', wait: true
+      }
+    }
+
+    stage('Blockchain Layer') {
+      steps {
+        build job: 'blockchain-layer-pipeline', wait: true
+      }
+    }
 
     
   }
