@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: projet-backend
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/projet"
+  SPRING_RABBITMQ_HOST: "rabbitmq"
+  EXTERNAL_API_URL: "https://api.example.com"
+  LOG_LEVEL_ROOT: "INFO"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+  SPRING_PROFILES_ACTIVE: "prod"
+

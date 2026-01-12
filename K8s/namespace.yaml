@@ -1,0 +1,116 @@
+## Namespaces pour le projet
+# - `projet-backend` : pour les microservices backend (booking, gateway, user, property, notification, blockchain)
+# - `projet-frontend` : réservé pour le frontend (vous ajouterez les ressources plus tard)
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projet-backend
+  labels:
+    app.kubernetes.io/managed-by: gitops
+    team: lsi
+    environment: dev
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projet-frontend
+  labels:
+    app.kubernetes.io/managed-by: gitops
+    team: lsi
+    environment: dev
+
+---
+# ServiceAccount et RBAC minimal pour déploiements dans `projet-backend`
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deployer
+  namespace: projet-backend
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployer-role
+  namespace: projet-backend
+rules:
+- apiGroups: ["", "apps"]
+  resources: ["pods", "services", "configmaps", "secrets", "deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: deployer-binding
+  namespace: projet-backend
+subjects:
+- kind: ServiceAccount
+  name: deployer
+  namespace: projet-backend
+roleRef:
+  kind: Role
+  name: deployer-role
+  apiGroup: rbac.authorization.k8s.io
+
+# Fin du fichier
+## Namespaces pour le projet
+# - `projet-backend` : pour les microservices backend (booking, gateway, user, property, notification, blockchain)
+# - `projet-frontend` : réservé pour le frontend (vous ajouterez les ressources plus tard)
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projet-backend
+  labels:
+    app.kubernetes.io/managed-by: gitops
+    team: lsi
+    environment: dev
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projet-frontend
+  labels:
+    app.kubernetes.io/managed-by: gitops
+    team: lsi
+    environment: dev
+
+---
+# ServiceAccount et RBAC minimal pour déploiements dans `projet-backend`
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deployer
+  namespace: projet-backend
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployer-role
+  namespace: projet-backend
+rules:
+- apiGroups: ["", "apps"]
+  resources: ["pods", "services", "configmaps", "secrets", "deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: deployer-binding
+  namespace: projet-backend
+subjects:
+- kind: ServiceAccount
+  name: deployer
+  namespace: projet-backend
+roleRef:
+  kind: Role
+  name: deployer-role
+  apiGroup: rbac.authorization.k8s.io
+
+# Fin du fichier
