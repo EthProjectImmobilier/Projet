@@ -24,6 +24,9 @@ public class PropertyResponse {
     private Integer bedrooms;
     private Integer bathrooms;
     private Long ownerId;
+    private String ownerFirstName;
+    private String ownerLastName;
+    private String ownerProfilePicture;
     private String ownerWalletAddress;
     private String ownershipDocumentUrl; // ← AJOUTÉ POUR L'ADMIN
     private ListingStatus status;

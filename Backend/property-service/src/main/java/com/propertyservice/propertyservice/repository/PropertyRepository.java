@@ -20,6 +20,8 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
     // Trouver les propriétés d'un owner
     Page<Property> findByOwnerId(Long ownerId, Pageable pageable);
 
+    List<Property> findByOwnerId(Long ownerId);
+
     Page<Property> findByStatus(ListingStatus status, Pageable pageable);
 
     long countByStatus(ListingStatus status);

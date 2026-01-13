@@ -2,6 +2,7 @@ package com.propertyservice.propertyservice.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@ConditionalOnProperty(name = "storage.type", havingValue = "local", matchIfMissing = true)
 public class LocalFileStorageService implements FileStorageService {
 
     private final Path fileStorageLocation;

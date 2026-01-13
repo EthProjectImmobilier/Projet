@@ -1,6 +1,7 @@
 package com.propertyservice.propertyservice.service;
 
 import com.propertyservice.propertyservice.dto.AIPricingResponse;
+import com.propertyservice.propertyservice.dto.AIRecommendationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -23,8 +24,8 @@ public class AIService {
 
     public AIService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder
-                .setConnectTimeout(Duration.ofMillis(500))
-                .setReadTimeout(Duration.ofMillis(1000))
+                .setConnectTimeout(Duration.ofMillis(2000)) // 2 seconds connect
+                .setReadTimeout(Duration.ofMillis(10000))   // 10 seconds read (Model training is slow)
                 .build();
     }
 
@@ -46,5 +47,38 @@ public class AIService {
             log.warn("Failed to get AI pricing suggestion for property {}: {}", propertyId, e.getMessage());
         }
         return null;
+    }
+
+    public Object getMarketTrends() {
+        try {
+            String url = UriComponentsBuilder.fromHttpUrl(aiServiceUrl)
+                    .path("/api/v1/analytics/trends")
+                    .toUriString();
+
+            // We use Object.class here to forward the raw JSON flexibly
+            return restTemplate.getForObject(url, Object.class);
+        } catch (Exception e) {
+            log.warn("Failed to get market trends: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    public java.util.List<Long> getRecommendedPropertyIds(BigDecimal budget) {
+        try {
+            String url = UriComponentsBuilder.fromHttpUrl(aiServiceUrl)
+                    .path("/api/v1/recommendations")
+                    .queryParam("user_budget", budget)
+                    .toUriString();
+
+            AIRecommendationResponse response = restTemplate.getForObject(url, AIRecommendationResponse.class);
+
+            if (response != null && response.getRecommended_property_ids() != null) {
+                log.info("AI recommended properties for budget {}: {}", budget, response.getRecommended_property_ids());
+                return response.getRecommended_property_ids();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to get AI recommendations for budget {}: {}", budget, e.getMessage());
+        }
+        return java.util.Collections.emptyList();
     }
 }

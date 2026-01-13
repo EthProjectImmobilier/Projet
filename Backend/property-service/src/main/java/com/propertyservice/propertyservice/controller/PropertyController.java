@@ -76,6 +76,12 @@ public class PropertyController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<PropertyResponse>> getPropertiesByOwnerInternal(@PathVariable Long ownerId) {
+        List<PropertyResponse> response = propertyService.getPropertiesByOwnerList(ownerId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
     public ResponseEntity<Page<PropertyResponse>> getAvailableProperties(
             @RequestParam(defaultValue = "0") int page,
@@ -218,5 +224,10 @@ public class PropertyController {
                 "propertyId", id.toString(),
                 "status", "saved_and_pending_admin"
         ));
+    }
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<PropertyResponse>> getRecommendations(
+            @RequestParam BigDecimal budget) {
+        return ResponseEntity.ok(propertyService.getPersonalizedRecommendations(budget));
     }
 }

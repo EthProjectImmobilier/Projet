@@ -56,3 +56,12 @@ app:
     similar-properties-limit : 6
   services:
     user-service-url: ${USER_SERVICE_URL:http://localhost:8081}
+
+aws:
+  s3:
+    bucket-name: bucket-block-lsi
+    region: eu-west-3
+  access-key: AKIAQZ4VATP3LZU7RGRJ
+  secret-key: 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
+storage:
+  type: s3

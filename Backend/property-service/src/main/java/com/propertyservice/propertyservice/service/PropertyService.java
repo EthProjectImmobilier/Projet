@@ -28,6 +28,7 @@ public class PropertyService {
     private final PropertyImageService propertyImageService;
     private final ReviewService reviewService;
     private final UserProfileClient userProfileClient;
+    private final AIService aiService;
 
     @Transactional
     public PropertyResponse createProperty(CreatePropertyRequest request, Long ownerId, String ownerWalletAddress, List<String> roles) {
@@ -94,14 +95,52 @@ public class PropertyService {
     }
 
     public Page<PropertyResponse> getPropertiesByOwner(Long ownerId, Pageable pageable) {
+        UserProfileDTO ownerProfile = null;
+        try {
+            ownerProfile = userProfileClient.getUserProfile(ownerId);
+        } catch (Exception e) {
+            log.warn("Could not fetch owner profile for owner {}: {}", ownerId, e.getMessage());
+        }
+        
+        final UserProfileDTO profile = ownerProfile;
         return propertyRepository.findByOwnerId(ownerId, pageable)
-                .map(this::mapToPropertyResponse);
+                .map(p -> this.mapToPropertyResponse(p, profile));
+    }
+
+    public List<PropertyResponse> getPropertiesByOwnerList(Long ownerId) {
+        UserProfileDTO ownerProfile = null;
+        try {
+            ownerProfile = userProfileClient.getUserProfile(ownerId);
+        } catch (Exception e) {
+            log.warn("Could not fetch owner profile for owner {}: {}", ownerId, e.getMessage());
+        }
+
+        final UserProfileDTO profile = ownerProfile;
+        return propertyRepository.findByOwnerId(ownerId).stream()
+                .map(p -> this.mapToPropertyResponse(p, profile))
+                .toList();
     }
 
     public Page<PropertyResponse> getAvailableProperties(Pageable pageable) {
-        // Implémentation temporaire - à compléter avec les filtres
-        return propertyRepository.findByStatus(ListingStatus.ACTIVE, pageable)
-                .map(this::mapToPropertyResponse);
+        Page<Property> properties = propertyRepository.findByStatus(ListingStatus.ACTIVE, pageable);
+        
+        // Batch fetch unique owner profiles
+        List<Long> ownerIds = properties.getContent().stream()
+                .map(Property::getOwnerId)
+                .distinct()
+                .toList();
+        
+        java.util.Map<Long, UserProfileDTO> ownerProfiles = new java.util.HashMap<>();
+        if (!ownerIds.isEmpty()) {
+            try {
+                List<UserProfileDTO> profiles = userProfileClient.getUsersByIds(ownerIds);
+                profiles.forEach(p -> ownerProfiles.put(p.getId(), p));
+            } catch (Exception e) {
+                log.warn("Could not batch fetch owner profiles: {}", e.getMessage());
+            }
+        }
+
+        return properties.map(p -> this.mapToPropertyResponse(p, ownerProfiles.get(p.getOwnerId())));
     }
 
     @Transactional
@@ -170,11 +209,25 @@ public class PropertyService {
     }
 
     public PropertyResponse mapToPropertyResponse(Property property) {
+        return mapToPropertyResponse(property, null);
+    }
+
+    public PropertyResponse mapToPropertyResponse(Property property, UserProfileDTO ownerProfile) {
         List<PropertyImageResponse> imageResponses = propertyImageService.getPropertyImages(property.getId());
 
         // Récupérer les stats des reviews
         Double averageRating = reviewService.getPropertyAverageRating(property.getId());
         Integer totalReviews = reviewService.getPropertyReviewCount(property.getId());
+
+        // Si le profil n'est pas fourni, on essaie de le récupérer (fallback)
+        if (ownerProfile == null && property.getOwnerId() != null) {
+            try {
+                ownerProfile = userProfileClient.getUserProfile(property.getOwnerId());
+            } catch (Exception e) {
+                log.warn("Could not fetch owner profile for property {}: {}", property.getId(), e.getMessage());
+            }
+        }
+
         return PropertyResponse.builder()
                 .id(property.getId())
                 .title(property.getTitle())
@@ -186,8 +239,11 @@ public class PropertyService {
                 .bedrooms(property.getBedrooms())
                 .bathrooms(property.getBathrooms())
                 .ownerId(property.getOwnerId())
+                .ownerFirstName(ownerProfile != null ? ownerProfile.getFirstName() : null)
+                .ownerLastName(ownerProfile != null ? ownerProfile.getLastName() : null)
+                .ownerProfilePicture(ownerProfile != null ? ownerProfile.getPhotoUrl() : null)
                 .ownerWalletAddress(property.getOwnerWalletAddress())
-                .ownershipDocumentUrl(property.getOwnershipDocumentUrl()) // ← AJOUTÉ ICI
+                .ownershipDocumentUrl(property.getOwnershipDocumentUrl())
                 .status(property.getStatus())
                 .createdAt(property.getCreatedAt())
                 .updatedAt(property.getUpdatedAt())
@@ -200,5 +256,50 @@ public class PropertyService {
                 .instantBookable(property.getInstantBookable())
                 .securityDeposit(property.getSecurityDeposit())
                 .build();
+    }
+    public List<PropertyResponse> getPersonalizedRecommendations(BigDecimal budget) {
+        // 1. Appeler l'IA pour avoir les IDs recommandés
+        List<Long> recommendedIds = aiService.getRecommendedPropertyIds(budget);
+        
+        if (recommendedIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 2. Récupérer les propriétés depuis la DB
+        List<Property> properties = propertyRepository.findAllById(recommendedIds);
+
+        // 3. Batch fetch unique owner profiles
+        List<Long> ownerIds = properties.stream()
+                .map(Property::getOwnerId)
+                .distinct()
+                .toList();
+
+        java.util.Map<Long, UserProfileDTO> ownerProfiles = new java.util.HashMap<>();
+        if (!ownerIds.isEmpty()) {
+            try {
+                List<UserProfileDTO> profiles = userProfileClient.getUsersByIds(ownerIds);
+                profiles.forEach(p -> ownerProfiles.put(p.getId(), p));
+            } catch (Exception e) {
+                log.warn("Could not batch fetch owner profiles for recommendations: {}", e.getMessage());
+            }
+        }
+
+        // 4. Trier les propriétés dans l'ordre donné par l'IA (meilleur match en premier)
+        // Map pour un accès rapide
+        java.util.Map<Long, Property> propertyMap = properties.stream()
+                .collect(java.util.stream.Collectors.toMap(Property::getId, p -> p));
+
+        List<PropertyResponse> sortedResponses = new ArrayList<>();
+        for (Long id : recommendedIds) {
+            if (propertyMap.containsKey(id)) {
+                Property property = propertyMap.get(id);
+                // Filtrer : Seules les propriétés ACTIVE sont retournées
+                if (property.getStatus() == ListingStatus.ACTIVE) {
+                    sortedResponses.add(mapToPropertyResponse(property, ownerProfiles.get(property.getOwnerId())));
+                }
+            }
+        }
+
+        return sortedResponses;
     }
 }

@@ -10,10 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AIPricingResponse {
     private Long property_id;
-    private String requested_date;
     private BigDecimal suggested_price_eth;
-    private BigDecimal original_price_eth;
-    private Double percent_increase;
-    private String comparison_info;
-    private String explanation;
+    private String yield_improvement;
+    private String note;
 }

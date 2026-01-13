@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -35,6 +36,8 @@ public class UserProfileClient {
             UserProfileDTO profile = UserProfileDTO.builder()
                     .id(getLong(response, "id"))
                     .email((String) response.get("email"))
+                    .firstName((String) response.get("firstName"))
+                    .lastName((String) response.get("lastName"))
                     .photoUrl((String) response.get("photoUrl"))
                     .kycRectoUrl((String) response.get("kycRectoUrl"))
                     .kycVersoUrl((String) response.get("kycVersoUrl"))
@@ -51,6 +54,35 @@ public class UserProfileClient {
         }
     }
     
+    public List<UserProfileDTO> getUsersByIds(List<Long> userIds) {
+        try {
+            String url = userServiceUrl + "/api/users/batch";
+            log.info("Calling user-service to get profiles for {} users", userIds.size());
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> response = restTemplate.postForObject(url, userIds, List.class);
+
+            if (response == null) {
+                return List.of();
+            }
+
+            return response.stream().map(map -> UserProfileDTO.builder()
+                    .id(getLong(map, "id"))
+                    .email((String) map.get("email"))
+                    .firstName((String) map.get("firstName"))
+                    .lastName((String) map.get("lastName"))
+                    .photoUrl((String) map.get("photoUrl"))
+                    .kycRectoUrl((String) map.get("kycRectoUrl"))
+                    .kycVersoUrl((String) map.get("kycVersoUrl"))
+                    .ethereumAddress((String) map.get("walletAddress"))
+                    .walletVerified(getBoolean(map, "walletVerified"))
+                    .build()).toList();
+        } catch (Exception e) {
+            log.error("❌ Failed to retrieve user profiles. Error: {}", e.getMessage());
+            return List.of();
+        }
+    }
+
     private Long getLong(Map<String, Object> map, String key) {
         Object value = map.get(key);
         if (value instanceof Integer) {
