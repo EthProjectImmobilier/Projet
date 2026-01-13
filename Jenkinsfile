@@ -42,7 +42,7 @@ pipeline {
 
     stage('Block Chain contract') {
       steps {
-        build job: 'rent-chain-pipeline', wait: true
+        build job: 'block-chain-pipeline', wait: true
       }
     }
     
