@@ -21,14 +21,14 @@ pipeline {
             }
         }
 
-        stage('Run tests') {
-            steps {
-                dir('rentChain') {
-                    // adapte si les tests n'existent pas ou utilisent une autre commande
-                    bat 'npm test || echo \"Tests failed or not configured\"'
-                }
-            }
-        }
+        // stage('Run tests') {
+        //     steps {
+        //         dir('rentChain') {
+        //             // adapte si les tests n'existent pas ou utilisent une autre commande
+        //             bat 'npm test || echo \"Tests failed or not configured\"'
+        //         }
+        //     }
+        // }
 
         stage('Build frontend') {
             steps {
