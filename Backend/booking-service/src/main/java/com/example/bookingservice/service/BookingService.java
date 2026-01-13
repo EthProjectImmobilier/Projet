@@ -2,6 +2,7 @@ package com.example.bookingservice.service;
 
 import com.example.bookingservice.client.PropertyServiceClient;
 import com.example.bookingservice.client.UserClient;
+import com.example.bookingservice.client.AIServiceClient;
 import com.example.bookingservice.config.RabbitConfig;
 import com.example.bookingservice.dto.*;
 import com.example.bookingservice.entity.Booking;
@@ -31,6 +32,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final PropertyServiceClient propertyServiceClient;
     private final UserClient userClient;
+    private final AIServiceClient aiServiceClient;
     private final RabbitTemplate rabbitTemplate;
 
     @Transactional
@@ -446,24 +448,81 @@ public class BookingService {
         }
     }
 
+    public RiskScoreResponse getUserTrustScore(Long userId) {
+        log.info("📊 Fetching Trust Score for User {}", userId);
+        try {
+            UserProfileDTO user = userClient.getUserProfile(userId);
+            if (user == null) {
+                // Fallback safe si user non trouvé (ne devrait pas arriver si authentifié)
+                return new RiskScoreResponse(userId, 50, "UNKNOWN");
+            }
+
+            int cancelCount = (int) bookingRepository.countByTenantIdAndStatus(userId, BookingStatus.CANCELLED);
+            int badReviews = 0; // TODO: Connect to Review Service
+
+            return aiServiceClient.getRiskScore(
+                    userId,
+                    cancelCount,
+                    badReviews,
+                    user.isWalletVerified()
+            );
+        } catch (Exception e) {
+            log.error("❌ Failed to fetch trust score: {}", e.getMessage());
+            // Fallback safe en cas d'erreur
+            return new RiskScoreResponse(userId, 100, "UNAVAILABLE");
+        }
+    }
+
     private void validateUserForBooking(Long userId) {
+        log.info("🔍 Starting user validation for userId: {}", userId);
         try {
             UserProfileDTO user = userClient.getUserProfile(userId);
 
             if (user == null) {
+                log.error("❌ User profile not found for userId: {}", userId);
                 throw new BookingNotFoundException("User profile not found");
             }
+            log.info("👤 User profile found: email={}, walletVerified={}", user.getEmail(), user.isWalletVerified());
 
             if (!user.isWalletVerified()) {
+                log.warn("❌ Wallet not verified for user {}", userId);
                 throw new IncompleteProfileException("Votre wallet doit être vérifié avant de pouvoir réserver.");
             }
 
             if (!user.isKycComplete()) {
-                throw new IncompleteProfileException("Votre profil est incomplet (photo ou documents KYC manquants). Veuillez compléter votre profil.");
-            }
+                    log.warn("❌ KYC incomplete for user {}", userId);
+                    throw new IncompleteProfileException("Votre profil est incomplet (photo ou documents KYC manquants). Veuillez compléter votre profil.");
+                }
 
-            log.info("✅ User {} validated for booking (KYC & Wallet OK)", userId);
-        } catch (IncompleteProfileException | BookingNotFoundException e) {
+                log.info("✅ User {} validated for booking (KYC & Wallet OK)", userId);
+
+                // --- Integration AI Service (Risk Score) ---
+                try {
+                    int cancelCount = (int) bookingRepository.countByTenantIdAndStatus(userId, BookingStatus.CANCELLED);
+                    int badReviews = 0;
+
+                    RiskScoreResponse risk = aiServiceClient.getRiskScore(
+                            userId,
+                            cancelCount,
+                            badReviews,
+                            user.isWalletVerified()
+                    );
+                    log.info("🛡️ Risk Analysis for User {}: Score={}, Level={}", userId, risk.getScore(), risk.getRisk_level());
+                    if (risk.getScore() < 50) {
+                        log.warn("🚫 Booking rejected: User {} has a trust score too low ({})", userId, risk.getScore());
+                        throw new InvalidActionException("Votre score de confiance est trop faible (" + risk.getScore() + "/100). " +
+                                "Vous avez trop d'annulations ou de litiges pour réserver ce bien.");
+                    }
+                }catch (InvalidActionException e) {
+                    // On REJETTE la réservation si le score est trop bas
+                    throw e;
+                } catch (Exception e) {
+                    log.warn("⚠️ AI Service unavailable or error, proceeding without risk score: {}", e.getMessage());
+                    // Fallback is handled by AI Service (returning 100), but if connection fails completely:
+                    // We just log and proceed, as per requirement "ne pas bloquer mon BookingService.java"
+                }
+
+            } catch (IncompleteProfileException | BookingNotFoundException e) {
             throw e;
         } catch (Exception e) {
             log.error("❌ Error while validating user {}: {}", userId, e.getMessage());

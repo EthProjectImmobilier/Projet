@@ -60,4 +60,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     BigDecimal sumRevenueByOwnerId(@Param("ownerId") Long ownerId);
 
     long countByOwnerIdAndStatus(Long ownerId, BookingStatus status);
+
+    long countByTenantIdAndStatus(Long tenantId, BookingStatus status);
 }
