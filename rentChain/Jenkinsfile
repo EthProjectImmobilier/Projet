@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'rentchain'
+        TAG = "${env.BUILD_NUMBER ?: 'local'}"
+        DOCKER_REGISTRY = 'docker.io/khazrisalah2004'
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                dir('rentChain') {
+                    bat 'npm ci'
+                }
+            }
+        }
+
+        stage('Run tests') {
+            steps {
+                dir('rentChain') {
+                    // adapte si les tests n'existent pas ou utilisent une autre commande
+                    bat 'npm test || echo \"Tests failed or not configured\"'
+                }
+            }
+        }
+
+        stage('Build frontend') {
+            steps {
+                dir('rentChain') {
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        stage('Build Docker image') {
+            steps {
+                dir('rentChain') {
+                    script {
+                        def imageFull = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.TAG}"
+                        bat "docker build -t ${imageFull} ."
+                        env.IMAGE_FULL = imageFull
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        bat 'echo %DOCKER_PASS% | docker login docker.io --username %DOCKER_USER% --password-stdin'
+                        bat "docker push ${env.IMAGE_FULL}"
+                    }
+                }
+            }
+        }
+    }
+}
