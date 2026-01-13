@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'blockchain_layer'
+        TAG = "${env.BUILD_NUMBER ?: 'local'}"
+        DOCKER_REGISTRY = 'docker.io/khazrisalah2004'
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                dir('Block-chain') {
+                    // change to `sh` if Jenkins agent is Linux; keeps parity with existing pipelines using Windows `bat`
+                    bat 'npm ci'
+                }
+            }
+        }
+
+        stage('Compile Contracts') {
+            steps {
+                dir('Block-chain') {
+                    bat 'npx hardhat compile'
+                }
+            }
+        }
+
+        stage('Run tests') {
+            steps {
+                dir('Block-chain') {
+                    // fail the build if tests fail
+                    bat 'npx hardhat test'
+                }
+            }
+        }
+
+        stage('Build Docker image') {
+            steps {
+                dir('Block-chain') {
+                    script {
+                        def imageFull = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.TAG}"
+                        bat "docker build -t ${imageFull} ."
+                        env.IMAGE_FULL = imageFull
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        bat 'echo %DOCKER_PASS% | docker login docker.io --username %DOCKER_USER% --password-stdin'
+                        bat "docker push ${env.IMAGE_FULL}"
+                    }
+                }
+            }
+        }
+    }
+}
