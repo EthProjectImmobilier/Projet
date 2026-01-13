@@ -28,7 +28,9 @@ public class InternalAuthFilter implements Filter {
                 path.equals("/swagger-ui.html") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
-                path.matches("/api/users/\\d+")) { // Allow GET /api/users/{id} for inter-service calls
+                path.matches("/api/users/\\d+") ||
+                path.matches("/api/users/\\d+/full") ||
+                path.equals("/api/users/batch")) { // Allow GET /api/users/{id}, /full and /batch for public/inter-service calls
             chain.doFilter(request, response);
             return;
         }

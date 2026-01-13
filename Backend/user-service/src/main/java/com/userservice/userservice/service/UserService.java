@@ -1,6 +1,9 @@
 package com.userservice.userservice.service;
 
+import com.userservice.userservice.client.PropertyServiceClient;
+import com.userservice.userservice.dto.PropertyResponseDTO;
 import com.userservice.userservice.dto.UpdateProfileRequest;
+import com.userservice.userservice.dto.UserFullResponse;
 import com.userservice.userservice.dto.UserResponse;
 import com.userservice.userservice.entity.User;
 import com.userservice.userservice.exception.UserNotFoundException;
@@ -10,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +22,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PropertyServiceClient propertyServiceClient;
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -86,6 +91,28 @@ public class UserService {
         return findByEthereumAddress(walletAddress)
                 .map(this::mapToResponse)
                 .orElseThrow(() -> new UserNotFoundException("User with wallet " + walletAddress + " not found"));
+    }
+
+    public UserFullResponse getUserFullResponse(Long userId) {
+        UserResponse userResponse = getCurrentUserDto(userId);
+        
+        List<PropertyResponseDTO> properties = List.of();
+        try {
+            properties = propertyServiceClient.getPropertiesByOwner(userId);
+        } catch (Exception e) {
+            log.error("Failed to fetch properties for user {}: {}", userId, e.getMessage());
+        }
+
+        return UserFullResponse.builder()
+                .userInfo(userResponse)
+                .properties(properties)
+                .build();
+    }
+
+    public List<UserResponse> getUsersByIds(List<Long> userIds) {
+        return userRepository.findAllById(userIds).stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     private UserResponse mapToResponse(User u) {
