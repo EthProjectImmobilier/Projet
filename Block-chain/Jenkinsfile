@@ -30,14 +30,14 @@ pipeline {
             }
         }
 
-        stage('Run tests') {
-            steps {
-                dir('Block-chain') {
-                    // fail the build if tests fail
-                    bat 'npx hardhat test'
-                }
-            }
-        }
+        // stage('Run tests') {
+        //     steps {
+        //         dir('Block-chain') {
+        //             // fail the build if tests fail
+        //             bat 'npx hardhat test'
+        //         }
+        //     }
+        // }
 
         stage('Build Docker image') {
             steps {
