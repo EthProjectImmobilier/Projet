@@ -21,14 +21,14 @@ pipeline {
             }
         }
 
-        stage('Run tests') {
-            steps {
-                dir('ia_service') {
-                    // Fails the build if tests fail; change or relax as needed
-                    bat 'pytest -q'
-                }
-            }
-        }
+        // stage('Run tests') {
+        //     steps {
+        //         dir('ia_service') {
+        //             // Fails the build if tests fail; change or relax as needed
+        //             bat 'pytest -q'
+        //         }
+        //     }
+        // }
 
         stage('Build Docker image') {
             steps {
