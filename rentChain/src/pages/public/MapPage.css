@@ -1,0 +1,78 @@
+/* Fix z-index issues with Leaflet map */
+/* Ensure map doesn't interfere with modals, dropdowns, and other UI elements */
+
+.leaflet-container {
+  z-index: 1 !important;
+}
+
+.leaflet-container-custom {
+  z-index: 1 !important;
+}
+
+/* Ensure popup appears above other content */
+.leaflet-popup {
+  z-index: 1000 !important;
+}
+
+/* Ensure popup content appears above popup */
+.leaflet-popup-content-wrapper {
+  z-index: 1001 !important;
+}
+
+/* Ensure popup tip appears above popup content */
+.leaflet-popup-tip {
+  z-index: 1002 !important;
+}
+
+/* Ensure zoom controls appear above map but below popups */
+.leaflet-control-container .leaflet-control {
+  z-index: 10 !important;
+}
+
+/* Ensure zoom controls appear above map */
+.leaflet-control-container .leaflet-control-zoom {
+  z-index: 11 !important;
+}
+
+/* Ensure attribution appears above map */
+.leaflet-control-container .leaflet-control-attribution {
+  z-index: 12 !important;
+}
+
+/* Custom marker styling */
+.custom-marker {
+  z-index: 20 !important;
+}
+
+/* Ensure marker popups appear above markers */
+.custom-marker + .leaflet-popup {
+  z-index: 1000 !important;
+}
+
+/* Additional fixes for common UI conflicts */
+
+/* Ensure map doesn't interfere with shadcn/ui components */
+.leaflet-container {
+  /* Prevent map from capturing pointer events when other elements should be on top */
+  pointer-events: auto;
+}
+
+/* Fix for modal dialogs appearing behind map */
+[data-radix-popper-content-wrapper] {
+  z-index: 1100 !important;
+}
+
+/* Fix for dropdown menus appearing behind map */
+[data-radix-dropdown-menu-content] {
+  z-index: 1100 !important;
+}
+
+/* Fix for select dropdowns appearing behind map */
+[data-radix-select-content] {
+  z-index: 1100 !important;
+}
+
+/* Fix for tooltips appearing behind map */
+[data-radix-tooltip-content] {
+  z-index: 1100 !important;
+}
