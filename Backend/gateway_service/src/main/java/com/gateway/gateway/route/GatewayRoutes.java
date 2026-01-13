@@ -71,6 +71,10 @@ public class GatewayRoutes {
                                 .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri(userServiceUri)
                 )
+                .route("user_service_public_info", r -> r
+                        .path("/api/users/{userId:\\d+}", "/api/users/{userId:\\d+}/full")
+                        .uri(userServiceUri)
+                )
                 .route("user_service_me", r -> r
                         .path("/api/users/me", "/api/users/me/**", "/api/users/upload")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
@@ -84,7 +88,7 @@ public class GatewayRoutes {
                         .uri(propertyServiceUri)
                 )
                 .route("property_service_public", r -> r
-                        .path("/api/properties", "/api/properties/{id}", "/api/properties/{id}/booking-info", "/api/properties/*/reviews/**")
+                        .path("/api/properties", "/api/properties/recommendations", "/api/properties/{id:\\d+}", "/api/properties/{id:\\d+}/booking-info", "/api/properties/*/reviews/**")
                         .and()
                         .method("GET")
                         .uri(propertyServiceUri)
@@ -117,6 +121,11 @@ public class GatewayRoutes {
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri(bookingServiceUri)
                 )
+                .route("booking_risk_service", r -> r
+                        .path("/api/risk/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri(bookingServiceUri)
+                )
                 .route("payment_service", r -> r
                         .path("/api/payments/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
@@ -136,6 +145,11 @@ public class GatewayRoutes {
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri(notificationServiceUri)
                 )
+                .route("analytics_service", r -> r
+                        .path("/api/analytics/**")
+                        //.filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))) // Uncomment to secure
+                        .uri(propertyServiceUri)
+                )
                 // ROUTES INTERNES (Service-to-Service)
                 .route("booking_service_internal", r -> r
                         .path("/internal/bookings/**")
@@ -154,8 +168,12 @@ public class GatewayRoutes {
                         .uri(userServiceUri)
                 )
                 .route("user_service_files", r -> r
-                        .path("/files/**")
+                        .path("/files/users/**", "/files/kyc/**", "/files/kyc_recto/**", "/files/kyc_verso/**","/files/avatar/**")
                         .uri(userServiceUri)
+                )
+                .route("property_service_files", r -> r
+                        .path("/files/properties/**", "/files/documents/**")
+                        .uri(propertyServiceUri)
                 )
                 .build();
     }

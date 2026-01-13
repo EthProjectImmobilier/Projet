@@ -89,13 +89,23 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     path.equals("/api/auth/test") ||
                     path.equals("/api/auth/verify-wallet");  // ✅ wallet verification est publique
         }
-        if (path.equals("/api/properties") && "GET".equalsIgnoreCase(method)) {
+        if ((path.equals("/api/properties") || path.equals("/api/properties/recommendations")) && "GET".equalsIgnoreCase(method)) {
             return true;
         }
         if (path.matches("/api/properties/\\d+") || path.matches("/api/properties/\\d+/booking-info")) {
             if ("GET".equalsIgnoreCase(method)) {
                 return true;
             }
+        }
+
+        if (path.matches("/api/users/\\d+") || path.matches("/api/users/\\d+/full")) {
+            if ("GET".equalsIgnoreCase(method)) {
+                return true;
+            }
+        }
+
+        if (path.startsWith("/files/")) {
+            return true;
         }
 
         if (path.equals("/api/properties/me") && "GET".equalsIgnoreCase(method)) {
