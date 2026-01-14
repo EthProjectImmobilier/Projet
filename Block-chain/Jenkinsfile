@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'blockchain_layer'
+        IMAGE_NAME = 'blockchain'
         TAG = "${env.BUILD_NUMBER ?: 'local'}"
         DOCKER_REGISTRY = 'docker.io/khazrisalah2004'
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
