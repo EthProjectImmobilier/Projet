@@ -45,6 +45,10 @@ pipeline {
         build job: 'block-chain-pipeline', wait: true
       }
     }
-    
+    stage('IA Service') {
+      steps {
+        build job: 'ia-service-pipeline', wait: true
+      }
+    }
   }
 }
