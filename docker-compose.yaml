@@ -149,7 +149,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_RABBITMQ_HOST: rabbitmq
     ports:
-      - "8084:8084"
+      - "8086:8086"
     networks:
       - projet_net
 
@@ -212,7 +212,7 @@ services:
     ports:
       - "80:80"
     environment:
-      VITE_API_BASE_URL: http://gateway:8080
+      VITE_API_BASE_URL: http://localhost:8080
     depends_on:
       - gateway
     networks:

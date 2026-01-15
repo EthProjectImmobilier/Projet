@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayRoutes {
 
-    @Value("${app.services.user-service.uri:http://localhost:8081}")
+    @Value("${app.services.user-service.uri:http://projet-user:8081}")
     private String userServiceUri;
 
-    @Value("${app.services.property-service.uri:http://localhost:8082}")
+    @Value("${app.services.property-service.uri:http://projet-property:8082}")
     private String propertyServiceUri;
 
-    @Value("${app.services.booking-service.uri:http://localhost:8083}")
+    @Value("${app.services.booking-service.uri:http://projet-booking:8083}")
     private String bookingServiceUri;
 
     @Value("${app.services.payment-service.uri:http://localhost:8084}")
@@ -25,7 +25,7 @@ public class GatewayRoutes {
     @Value("${app.services.blockchain-service.uri:http://localhost:8085}")
     private String blockchainServiceUri;
 
-    @Value("${app.services.notification-service.uri:http://localhost:8086}")
+    @Value("${app.services.notification-service.uri:http://projet-notification:8086}")
     private String notificationServiceUri;
 
     @Bean
