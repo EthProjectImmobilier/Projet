@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ia-service
+  namespace: projet-backend
+  labels:
+    app: ia-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ia-service
+  template:
+    metadata:
+      labels:
+        app: ia-service
+    spec:
+      serviceAccountName: deployer
+      containers:
+        - name: ia-service
+          image: khazrisalah2004/ia_service:4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: backend-config
+          env:
+            - name: MODEL_DIR
+              value: "/app/models"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10

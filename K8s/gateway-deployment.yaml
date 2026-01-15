@@ -18,7 +18,7 @@ spec:
       serviceAccountName: deployer
       containers:
         - name: gateway
-          image: khazrisalah2004/gateway_service:26
+          image: khazrisalah2004/gateway_service:28
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

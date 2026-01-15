@@ -1,32 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service
+  name: block-chain
   namespace: projet-backend
   labels:
-    app: user-service
+    app: block-chain
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: user-service
+      app: block-chain
   template:
     metadata:
       labels:
-        app: user-service
+        app: block-chain
     spec:
       serviceAccountName: deployer
       containers:
-        - name: user-service
-          image: khazrisalah2004/user_service:12
+        - name: block-chain
+          image: khazrisalah2004/blockchain:3
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8081
+            - containerPort: 8080
           envFrom:
             - configMapRef:
                 name: backend-config
-            - configMapRef:
-                name: user-config
           env:
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
@@ -41,19 +39,19 @@ spec:
           resources:
             requests:
               cpu: "100m"
-              memory: "128Mi"
+              memory: "256Mi"
             limits:
               cpu: "500m"
               memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8081
-            initialDelaySeconds: 120
-            periodSeconds: 20
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8081
-            initialDelaySeconds: 90
-            periodSeconds: 10
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 15

@@ -18,7 +18,7 @@ spec:
       serviceAccountName: deployer
       containers:
         - name: blockchain-layer
-          image: khazrisalah2004/blockchain_layer:2
+          image: khazrisalah2004/blockchain_layer:4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

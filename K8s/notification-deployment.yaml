@@ -18,7 +18,7 @@ spec:
       serviceAccountName: deployer
       containers:
         - name: notification-service
-          image: khazrisalah2004/notification-service:2
+          image: khazrisalah2004/notification-service:3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

@@ -4,10 +4,18 @@ metadata:
   name: backend-config
   namespace: projet-backend
 data:
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/projet"
+  # SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/global_db"
   SPRING_RABBITMQ_HOST: "rabbitmq"
-  EXTERNAL_API_URL: "https://api.example.com"
   LOG_LEVEL_ROOT: "INFO"
   SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
   SPRING_PROFILES_ACTIVE: "prod"
+  USER_SERVICE_URL: "http://user-service:80"
+  PROPERTY_SERVICE_URL: "http://property-service:80"
+  BOOKING_SERVICE_URL: "http://booking-service:80"
+  NOTIFICATION_SERVICE_URL: "http://notification-service:80"
+  BLOCKCHAIN_SERVICE_URL: "http://blockchain-layer:80"
+  BLOCKCHAIN_LEGACY_URL: "http://block-chain:80"
+  IA_SERVICE_URL: "http://ia-service:8000"
+  GATEWAY_URL: "http://gateway:80"
+  RENTCHAIN_URL: "http://rent-chain.projet-frontend.svc.cluster.local:80"
 

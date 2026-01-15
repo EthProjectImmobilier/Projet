@@ -18,13 +18,15 @@ spec:
       serviceAccountName: deployer
       containers:
         - name: property-service
-          image: khazrisalah2004/property-service:3
+          image: khazrisalah2004/property-service:4
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - containerPort: 8082
           envFrom:
             - configMapRef:
                 name: backend-config
+            - configMapRef:
+                name: property-config
           env:
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
@@ -46,12 +48,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 30
+              port: 8082
+            initialDelaySeconds: 120
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 15
+              port: 8082
+            initialDelaySeconds: 60
             periodSeconds: 10
