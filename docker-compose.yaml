@@ -1,0 +1,228 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres:14-alpine
+    container_name: projet_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - projet_net
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: projet_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - projet_net
+
+
+  gateway:
+    build:
+      context: ./Backend/gateway_service
+      dockerfile: Dockerfile
+    container_name: projet_gateway
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/global_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8080:8080"
+    networks:
+      - projet_net
+
+
+  user-service:
+    build:
+      context: ./Backend/user-service
+      dockerfile: Dockerfile
+    container_name: projet_user
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8081:8081"
+    networks:
+      - projet_net
+
+
+  property-service:
+    build:
+      context: ./Backend/property-service
+      dockerfile: Dockerfile
+    container_name: projet_property
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/property_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8082:8082"
+    networks:
+      - projet_net
+
+
+  booking-service:
+    build:
+      context: ./Backend/booking-service
+      dockerfile: Dockerfile
+    container_name: projet_booking
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/booking_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8083:8083"
+    networks:
+      - projet_net
+
+
+  notification-service:
+    build:
+      context: ./Backend/notification-service
+      dockerfile: Dockerfile
+    container_name: projet_notification
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notification_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8084:8084"
+    networks:
+      - projet_net
+
+
+  blockchain-layer:
+    build:
+      context: ./Backend/Blockchain_Layer
+      dockerfile: Dockerfile
+    container_name: projet_blockchain_layer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/global_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8085:8085"
+    networks:
+      - projet_net
+
+
+  block-chain:
+    build:
+      context: ./Block-chain
+      dockerfile: Dockerfile
+    container_name: projet_block_chain
+    restart: unless-stopped
+    networks:
+      - projet_net
+
+
+  ia-service:
+    build:
+      context: ./ia_service
+      dockerfile: Dockerfile
+    container_name: projet_ia
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      MODEL_DIR: /app/models
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8000:8000"
+    networks:
+      - projet_net
+
+
+  rent-chain:
+    build:
+      context: ./rentChain
+      dockerfile: Dockerfile
+    container_name: projet_rentchain
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      VITE_API_BASE_URL: http://gateway:8080
+    depends_on:
+      - gateway
+    networks:
+      - projet_net
+
+
+volumes:
+  pgdata:
+  rabbitmq-data:
+
+networks:
+  projet_net:
+    driver: bridge
