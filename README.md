@@ -202,7 +202,7 @@ L'application repose sur une **architecture microservices orientée événements
 |------------|----------------------|---------------|
 | Backend    | Marouane Faik        | [README](./Backend/Backend.md)      |
 | Frontend   | Omar Gennone         | [README](./rentChain/README.md)         |
-| Blockchain | Chikh Imane          | [README](./Block-chain/test1.md)          |
+| Blockchain | Chikh Imane          | [README](./Block-chain/README.md)          |
 | DevOps     | Salah Eddine Khazri  | [README](./K8s/DevOps.md)          |
 | Cloud      | Youssef El Ajbari    | [README](./K8s/Cloud.md)          |
 | IA         | Marouane Faik        | [README](./ia_service/README.md)          |
