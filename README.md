@@ -195,14 +195,75 @@ L'application repose sur une **architecture microservices orientée événements
 | **DevOps/Cloud** | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker) ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes) ![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=jenkins) ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform) ![AWS](https://img.shields.io/badge/AWS-FF9900?style=flat-square&logo=amazonaws) |
 
 ---
-## Les rôles et le responsable 
+<h2>👥 Les rôles et responsables</h2>
 
+<table align="center" width="100%" cellpadding="10">
+<tr>
+    <th>Rôle</th>
+    <th>Responsable</th>
+    <th>Technologie</th>
+    <th>Documentation</th>
+</tr>
 
-| Role       | Responsable          | Documentation |
-|------------|----------------------|---------------|
-| Backend    | Marouane Faik        | [README](./Backend/Backend.md)      |
-| Frontend   | Omar Gennone         | [README](./rentChain/README.md)         |
-| Blockchain | Chikh Imane          | [README](./Block-chain/README.md)          |
-| DevOps     | Salah Eddine Khazri  | [README](./K8s/DevOps.md)          |
-| Cloud      | Youssef El Ajbari    | [README](./K8s/Cloud.md)          |
-| IA         | Marouane Faik        | [README](./ia_service/README.md)          |
+<tr align="center">
+    <td>Backend</td>
+    <td><b>Marouane Faik</b></td>
+    <td>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="40" title="Spring Boot"/>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="40" title="Java"/>
+    </td>
+    <td><a href="./Backend/Backend.md">README</a></td>
+</tr>
+
+<tr align="center">
+    <td>Frontend</td>
+    <td><b>Omar Gennone</b></td>
+    <td>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40" title="React"/>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="40" title="TypeScript"/>
+    </td>
+    <td><a href="./rentChain/README.md">README</a></td>
+</tr>
+
+<tr align="center">
+    <td>Blockchain</td>
+    <td><b>Chikh Imane</b></td>
+    <td>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/solidity/solidity-original.svg" width="40" title="Solidity"/>
+        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" width="40" title="Ethereum"/>
+    </td>
+    <td><a href="./Block-chain/README.md">README</a></td>
+</tr>
+
+<tr align="center">
+    <td>DevOps</td>
+    <td><b>Salah Eddine Khazri</b></td>
+    <td>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="40" title="Docker"/>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" width="40" title="Kubernetes"/>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg" width="40" title="Jenkins"/>
+    </td>
+    <td><a href="./K8s/DevOps.md">README</a></td>
+</tr>
+
+<tr align="center">
+    <td>Cloud</td>
+    <td><b>Youssef El Ajbari</b></td>
+    <td>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" width="40" title="AWS"/>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg" width="40" title="Terraform"/>
+    </td>
+    <td><a href="./K8s/Cloud.md">README</a></td>
+</tr>
+
+<tr align="center">
+    <td>Intelligence Artificielle</td>
+    <td><b>Marouane Faik</b></td>
+    <td>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="40" title="Python"/>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Scikit_learn_logo_small.svg" width="40" title="Scikit-learn"/>
+    </td>
+    <td><a href="./ia_service/README.md">README</a></td>
+</tr>
+
+</table>
