@@ -3,6 +3,18 @@
 # 🏠 RentChain
 ## Plateforme Décentralisée de Location Immobilière
 
+### Home Page
+![Home Page](./rentChain/screenshots/home-page.png)
+*Main landing page with featured properties and market trends*
+
+### Property Details
+![Property Details](./rentChain/screenshots/property-details.png)
+*Detailed property view with booking interface*
+
+### Admin Panel
+![Admin Panel](./rentChain/screenshots/admin-panel.png)
+*Administrative dashboard for platform management*
+
 <blockquote>
 <strong>Une DApp Web3 complète pour la location immobilière sans intermédiaire, bâtie sur Ethereum Sepolia</strong>
 </blockquote>
