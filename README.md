@@ -255,13 +255,20 @@ L'application repose sur une **architecture microservices orientée événements
 </tr>
 
 <tr>
-<td><b>DevOps / Cloud</b></td>
+<td><b>DevOps</b></td>
 <td align="center">
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="45" title="Docker"/>
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" width="45" title="Kubernetes"/>
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg" width="45" title="Jenkins"/>
+    
+</td>
+</tr>
+<tr>
+<td><b>Cloud</b></td>
+<td align="center">
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg" width="45" title="Terraform"/>
     <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" width="80" title="AWS"/>
+    
 </td>
 </tr>
 
