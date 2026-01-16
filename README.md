@@ -302,7 +302,7 @@ L'application repose sur une **architecture microservices orientée événements
 
 <tr align="center">
     <td>Frontend</td>
-    <td><b>Omar Gennone</b></td>
+    <td><b>Omar GANNOUNE</b></td>
     <td>
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40" title="React"/>
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="40" title="TypeScript"/>
