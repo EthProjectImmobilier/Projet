@@ -1,23 +1,13 @@
 <div align="center">
 
-  <h1>RentChain · Backend Microservices</h1>
+  <h1>AI-Service</h1>
 
   <p>
-    Backend d’une dapp de location immobilière moderne,<br/>
-    construit autour de <b>microservices Spring Boot</b> sécurisés par JWT<br/>
-    et intégrés à une <b>blockchain Ethereum</b> pour la gestion des paiements et de l’escrow.
+    Microservice IA pour la plateforme de location immobilière :<br/>
+    <b>recommandations de propriétés</b>, <b>tarification dynamique</b>, <b>scoring de risque</b><br/>
+    et <b>analytics de marché</b>, propulsés par Python, FastAPI et des modèles de Machine Learning.
   </p>
 
-</div>
-
----
-
-<div align="center">
-  <h3>Tech Stack</h3>
-  <p>
-    <img src="https://skillicons.dev/icons?i=java,spring,postgres,rabbitmq" alt="Java, Spring, PostgreSQL, RabbitMQ" />
-  </p>
-  <p><small>Backend : Spring Boot · Sécurité : JWT · Asynchronous Messaging : RabbitMQ · DB : PostgreSQL</small></p>
 </div>
 
 ---
@@ -34,181 +24,237 @@
 
 ---
 
-## Architecture backend
-
-```mermaid
-graph LR
-    Client["Frontend Client"]
-    Client -->|REST+JWT| Gateway["API Gateway"]
-    
-    Gateway --> UserSvc["User Service"]
-    Gateway --> PropertySvc["Property Service"]
-    Gateway --> BookingSvc["Booking Service"]
-    Gateway --> NotifSvc["Notification Service"]
-    
-    UserSvc --> UserDB["User DB"]
-    PropertySvc --> PropertyDB["Property DB"]
-    BookingSvc --> BookingDB["Booking DB"]
-    NotifSvc --> NotifDB["Notification DB"]
-    
-    BookingSvc -->|Escrow Events| Blockchain["Blockchain Layer"]
-    Blockchain --> Ethereum["Ethereum Sepolia"]
-    
-    BookingSvc -->|Events| RabbitMQ["RabbitMQ"]
-    PropertySvc -->|Events| RabbitMQ
-    Blockchain -->|Events| RabbitMQ
-    RabbitMQ --> NotifSvc
-    
-    style Gateway fill:#4CAF50
-    style UserSvc fill:#2196F3
-    style PropertySvc fill:#2196F3
-    style BookingSvc fill:#2196F3
-    style NotifSvc fill:#2196F3
-    style Blockchain fill:#FF9800
-```
-
-Chaque microservice possède sa propre base de données, sa configuration, et communique principalement via **REST** (via la gateway) et **RabbitMQ** pour les événements.
+<div align="center">
+  <h3>Tech Stack</h3>
+  <p><img src="https://skillicons.dev/icons?i=python,fastapi,pandas,numpy" alt="Python, FastAPI, pandas, numpy" /></p>
+  <p><small>ML : scikit-learn (RandomForest, K-Means, cosine similarity), XGBoost, statsmodels (Holt-Winters)</small></p>
+</div>
 
 ---
 
-## 2. Microservices et responsabilités
+## 🔍 About the Project
 
-| Service            | Dossier            | Port (par défaut) | Rôle principal |
-|--------------------|--------------------|-------------------|----------------|
-| API Gateway        | `gateway/`         | 8080              | Point d’entrée unique, routage, filtrage JWT, délégation vers les microservices |
-| User Service       | `user-service/`    | 8081              | Authentification, gestion utilisateurs, profils, rôles, fichiers KYC & avatars |
-| Property Service   | `property-service/`| 8082              | Propriétés, images, disponibilité, reviews, recherche, analytics |
-| Booking Service    | `booking-service/` | 8083              | Réservations, cohérence des états, gestion du risque, intégration blockchain |
-| Notification Serv. | `notification-service/` | 8086         | Notifications persistées, emails, consommation d’événements RabbitMQ |
-| Blockchain Layer   | `Blockchain_Layer/`| 8085              | Intégration Ethereum/Sepolia, escrow, vérification des paiements, événements |
+AI-Service est un microservice d’**intelligence artificielle** dédié à la plateforme de location immobilière du projet.
+Il fournit des capacités avancées de :
 
----
+- Recommandation de propriétés en fonction du profil et du budget de l’utilisateur.
+- **Tarification dynamique** pour optimiser le revenu des propriétaires et la conversion côté locataire.
+- **Scoring de risque** pour évaluer la fiabilité des locataires dans le processus de réservation.
+- Analytics et tendances de marché exploitables par les autres microservices.
 
-## 3. Mon travail en tant que développeur backend
-
-### 3.1. Architecture & communication
-- Conception de l’**architecture microservices** autour de domaines métier clairs : utilisateurs, propriétés, réservations, notifications, blockchain.
-- Mise en place de la **API Gateway** (Spring Cloud Gateway) avec routage dynamique, filtres custom (`JwtAuthenticationFilter`), et propagation des informations utilisateur.
-- Définition des **contrats REST** (DTO, conventions d’URL, statuts HTTP, gestion d’erreurs centralisée) pour chaque service.
-- Utilisation de **RabbitMQ** pour les événements asynchrones (réservations créées/annulées, notifications, événements blockchain, etc.).
-
-### 3.2. Sécurité & identité
-- Mise en place de l’**authentification JWT** (génération, validation, refresh) dans `user-service` et intégration dans la gateway.
-- Gestion des **rôles et permissions** (TENANT, OWNER, ADMIN) et des routes publiques / protégées.
-- Création de filtres et endpoints internes pour la **communication inter-service sécurisée**.
-
-### 3.3. Services métier
-- **User Service** :
-  - APIs d’inscription, login, refresh, reset password, gestion du profil.
-  - Gestion des **fichiers utilisateurs** (avatars, KYC recto/verso), stockage local dans `uploads/` (et préparation pour S3 via `S3Config` et un `FileStorageService`).
-  - Vérification d’email, association de **wallet Ethereum**, endpoints internes pour les autres services.
-
-- **Property Service** :
-  - APIs de **CRUD propriétés**, recherche avancée, gestion de la disponibilité et des images.
-  - Gestion des **reviews** (création, modération admin, statistiques) et d’**analytics** (exposition des données au frontend ou à l’IA).
-  - Intégration avec le user-service pour enrichir les réponses (propriétaires, profils, etc.).
-
-- **Booking Service** :
-  - APIs de **création, modification, annulation et consultation des réservations**.
-  - Gestion de l’état des réservations (confirmed, completed, cancelled…) et validation métier.
-  - Intégration avec **property-service** et **user-service** via clients HTTP.
-  - Production d’événements pour la blockchain (escrow) et les notifications.
-
-- **Notification Service** :
-  - Stockage des notifications utilisateur (PostgreSQL), listing, marquage comme lues, suppression.
-  - Envoi d’**emails** via SMTP.
-  - Consommation des messages RabbitMQ émis par booking/property/blockchain.
-
-- **Blockchain Layer** :
-  - Intégration avec Ethereum/Sepolia via **Web3j**.
-  - Gestion des smart contracts **Escrow**, **PropertyRegistry** (dossiers `solidity/` et `abis/`).
-  - Endpoints pour **enregistrer des utilisateurs**, vérifier et suivre les paiements de réservation, lire les soldes d’escrow.
-  - Listeners d’événements blockchain et publication d’événements vers les autres services (RabbitMQ).
+Il est développé en **Python/FastAPI**, consomme et enrichit les données des microservices Java,
+et expose une API REST propre, pensée pour s’intégrer facilement dans une architecture microservices existante.
 
 ---
 
-## 4. Détails par service (résumé technique)
+## ✨ Key Features
 
-### 4.1. Gateway – [gateway/](gateway)
-- **Technos** : Spring Boot, Spring Cloud Gateway, JWT.
-- **Responsabilités** :
-  - Routage vers les microservices (`GatewayRoutes.java`).
-  - Validation des tokens (`JwtAuthenticationFilter`, `JwtTokenProvider`).
-  - Définition des routes publiques/privées et propagation des headers utilisateur.
-
-### 4.2. User Service – [user-service/](user-service)
-- **Technos** : Spring Boot (Web, Security, Data JPA, Mail), PostgreSQL, Web3j, Lombok.
-- **Responsabilités** :
-  - Authentification JWT, refresh tokens, gestion de session côté backend.
-  - Gestion des profils, avatars, fichiers KYC.
-  - Rôles, permissions, endpoints admin, endpoints internes.
-
-### 4.3. Property Service – [property-service/](property-service)
-- **Technos** : Spring Boot (Web, Data JPA, Validation, AMQP), PostgreSQL, Lombok.
-- **Responsabilités** :
-  - CRUD propriétés, filtres de recherche, pagination.
-  - Gestion des images et stockage dans `uploads/`.
-  - Reviews, analytics, intégration RabbitMQ.
-
-### 4.4. Booking Service – [booking-service/](booking-service)
-- **Technos** : Spring Boot (Web, Data JPA, Validation, AMQP, OpenFeign), PostgreSQL.
-- **Responsabilités** :
-  - Modèle de réservation central du système.
-  - Communication avec user-service et property-service via clients HTTP.
-  - Gestion des erreurs métier spécialisées (conflits de réservation, profils incomplets, etc.).
-
-### 4.5. Notification Service – [notification-service/](notification-service)
-- **Technos** : Spring Boot (Web, Data JPA, AMQP, Mail, OpenFeign), PostgreSQL, RabbitMQ.
-- **Responsabilités** :
-  - Stockage et exposition des notifications.
-  - Envoi d’emails selon les événements reçus.
-
-### 4.6. Blockchain Layer – [Blockchain_Layer/](Blockchain_Layer)
-- **Technos** : Spring Boot (Web, Validation, AMQP, OpenFeign), Web3j, RabbitMQ.
-- **Responsabilités** :
-  - Intégration avec les smart contracts (Escrow, PropertyRegistry) via les classes générées dans `abi/`.
-  - Exposition d’APIs pour la création de locations blockchain, la vérification des transactions et la consultation des soldes.
+- 🔮 **Property Recommendations** – recommandations basées sur le budget et le profil, via <b>K-Means</b> + <b>cosine similarity</b> sur les propriétés.
+- 💸 **Dynamic Pricing Engine** – suggestion de prix optimisés grâce à un modèle <b>XGBoost (XGBRegressor)</b> combiné à des règles de saisonnalité et de week-end.
+- 🛡️ **Tenant Risk Scoring** – score de risque utilisateur calculé avec un <b>RandomForestClassifier</b> entraîné sur des données synthétiques (annulations, mauvais avis, wallet vérifié).
+- 📊 **Market Analytics** – prévisions et <b>clustering temporel</b> des villes via <b>RandomForestRegressor</b> vs <b>Holt-Winters (Exponential Smoothing)</b> et <b>K-Means</b> sur les séries.
+- ⚙️ **API REST FastAPI** – endpoints documentés (Swagger / Redoc) intégrables par les services Java.
+- 📦 **Modèles ML versionnés** – modèles entraînés et sérialisés (joblib) pour une mise en production simple.
 
 ---
 
-## 5. Communication, persistance et fichiers
+## 🚀 Quick Start
 
-- **REST + JSON** : communication synchronisée entre les services via la gateway.
-- **RabbitMQ** : événements métier (réservations, paiements, notifications, blockchain).
-- **Bases de données** : chaque microservice possède son propre schéma (approche microservices réelle).
-- **Fichiers** :
-  - Avatars & KYC dans `user-service/uploads/`.
-  - Documents & images de propriétés dans `property-service/uploads/`.
-  - Architecture prête pour une migration vers **S3** via les configs déjà présentes.
-
----
-
-## 6. Lancer le backend en local
-
-### 6.1. Prérequis globaux
-- Java 21+ (Java 17+ pour certains services comme Blockchain_Layer).
-- Maven.
-- PostgreSQL (une base par service, ou schémas séparés).
-- RabbitMQ.
-
-### 6.2. Démarrage des microservices Java
-Depuis chaque dossier de service (`gateway/`, `user-service/`, `property-service/`, `booking-service/`, `notification-service/`, `Blockchain_Layer/`) :
+### 1. Cloner le dépôt & se placer dans le service IA
 
 ```bash
-mvn clean package
-java -jar target/<nom-du-jar>.jar
+git clone <URL_DU_REPO>
+cd ai-service
 ```
 
-Les ports par défaut sont listés dans les README de chaque service et dans leurs fichiers `application.yml` / `application.properties`.
+### 2. Installer les dépendances Python
 
-## 7. Technologies clés
+```bash
+pip install -r requirements.txt
+```
 
-- **Langages** : Java (Spring Boot).
-- **Frameworks** : Spring Boot, Spring Cloud Gateway, Spring Security.
-- **Messaging** : RabbitMQ.
-- **Base de données** : PostgreSQL (JPA/Hibernate).
-- **Blockchain** : Web3j, smart contracts Solidity (Escrow, PropertyRegistry, etc.).
-- **Infra** : Profils Spring, configuration via variables d’environnement / fichiers `.env`.
+### 3. Lancer le serveur FastAPI
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+L’API sera accessible sur `http://localhost:8000` 
+---
+
+## 🧠 Architecture & Challenges
+
+Le service est structuré autour de plusieurs composants clés :
+
+- `main.py` pour la définition des endpoints FastAPI et le chargement des modèles.
+- `analytics_engine.py` pour les traitements analytiques avancés (trends, clustering…).
+- `train_pricing.py` et `train_risk_model.py` pour l’entraînement et la mise à jour des modèles.
+- Des artefacts ML sérialisés (`*.joblib`) utilisés en inférence temps réel.
 
 
-Ce README présente le travail backend réalisé autour de cette architecture microservices et de l’intégration blockchain, dans un contexte proche d’une application de production moderne.
+Cette section met en avant la capacité à concevoir un service IA **industriel**, connecté à des microservices Java tout en restant maintenable, testable et extensible.
+
+---
+
+# AI Service – Architecture & Réalisations
+
+Ce document présente en détail le **service d’IA** de la plateforme, développé en **Python / FastAPI** et intégré au reste de l’architecture microservices Java.
+
+L’objectif de ce service est de fournir :
+- Des **recommandations de propriétés** personnalisées.
+- Une **tarification dynamique** des logements (pricing).
+- Un **scoring de risque utilisateur** (tenant risk).
+- Des **analytics de marché** (tendances, clustering, prévisions).
+
+---
+
+## 1. Contexte dans l’architecture globale
+
+Le AI Service est un microservice indépendant, exposé en HTTP (REST) et consommé principalement par :
+- **Booking Service && User Service** : pour la tarification des réservations et le scoring de risque.
+- **Property Service** : pour la recommandation et les analytics.
+
+```text
+Java Microservices (Spring Boot)
+   │
+   │  HTTP / JSON
+   ▼
+AI Service (FastAPI, Python)
+   ├─ Modèles ML (pricing)
+   ├─ Modèles ML (risque utilisateur)
+   └─ Recommandations & analytics marché
+```
+
+Le service est **découplé** des autres services (technologie différente, cycle de vie propre) mais partage des contrats d’échange (DTO JSON) bien définis.
+
+---
+
+## 2. Structure du projet AI
+
+Dossier : [ai-service/](ai-service)
+
+- `main.py` :
+  - Application **FastAPI**.
+  - Définition des endpoints principaux (recommandations, tarification, risque, analytics).
+  - Chargement des modèles ML (pricing, risque, recommandation).
+
+- `analytics_engine.py` :
+  - Fonctions d’**analytics avancés** (trends, clustering, prévisions, agrégations sur l’historique).
+  - Utilisation de pandas / numpy pour manipuler les données.
+
+- `train_pricing.py` :
+  - Script d’**entraînement du modèle de tarification** (XGBoost ou modèle régressif).
+  - Génération du fichier `pricing_model.joblib`.
+
+- `train_risk_model.py` :
+  - Script d’**entraînement du modèle de risque utilisateur**.
+  - Génération du fichier `risk_model.joblib` et `models/tenant_risk_model.joblib`.
+
+- `models/` :
+  - `recommender_data.joblib` : données/features pré-calculées pour la recommandation.
+  - `tenant_risk_model.joblib` : modèle ML pour le risque utilisateur.
+
+- Fichiers de modèles racine :
+  - `pricing_model.joblib` : modèle d’estimation de prix.
+  - `risk_model.joblib` : modèle de risque (version / alias).
+
+- `requirements.txt` :
+  - Dépendances Python (FastAPI, Uvicorn, scikit-learn, XGBoost, pandas, numpy, python-dotenv, etc.).
+
+---
+
+## 3. Fonctionnalités IA implémentées
+
+### 3.1. Recommandation de propriétés
+- Entrées typiques :
+  - Budget utilisateur, localisation, caractéristiques de la propriété (taille, type, etc.).
+- Traitement :
+  - Utilisation de **représentations vectorielles** des propriétés et/ou de l’historique.
+  - Calcul de similarités (ex : **cosine similarity**) et éventuellement **clustering** par zone / catégorie.
+- Sortie :
+  - Liste de propriétés recommandées avec un score de pertinence.
+
+### 3.2. Tarification dynamique (Pricing)
+- Objectif : suggérer un **prix optimal** pour une propriété donnée à une date donnée.
+- Features utilisées (exemples) :
+  - Saison / mois de l’année, jour de la semaine (week-end vs semaine).
+  - Caractéristiques du bien (surface, localisation, capacité, etc.).
+  - Retour d’expérience sur l’occupation et le revenu.
+- Modèle :
+  - **XGBoost**, entraîné via `train_pricing.py`.
+- Sortie :
+  - `PriceCalculationResult` avec prix conseillé et éventuellement des indicateurs (min/max, intervalle de confiance, etc.).
+
+### 3.3. Scoring de risque utilisateur
+- Objectif : renvoyer un **score de risque** pour un locataire.
+- Features possibles :
+  - Nombre d’annulations, d’incidents passés, historique d’avis.
+  - Statut KYC, wallet vérifié ou non, ancienneté du compte.
+- Modèle :
+  - Classifieur ou régression de probabilité, entraîné via `train_risk_model.py`.
+- Sortie :
+  - Score numérique (0–100) avec éventuellement une catégorie (LOW, MEDIUM, HIGH).
+
+### 3.4. Analytics de marché
+- Clustering de villes / zones selon les prix.
+- Agrégations et tendances des prix (moyennes, médianes, saisonnalité).
+- Possibilité de produire des séries temporelles pour des dashboards.
+
+---
+
+## 4. Endpoints principaux
+
+Les routes exactes peuvent évoluer, mais la structure principale est la suivante (définie dans `main.py`) :
+
+- `GET /api/v1/recommendations` :
+  - Paramètres : budget, localisation, etc.
+  - Réponse : liste de propriétés recommandées.
+
+- `GET /api/v1/pricing/suggest` :
+  - Paramètres : ID propriété, date, éventuellement contexte (occupations passées).
+  - Réponse : prix conseillé + informations complémentaires.
+
+- `GET /api/v1/risk/score/{user_id}` :
+  - Paramètres : `user_id`.
+  - Réponse : score de risque et niveau.
+
+- `GET /api/v1/analytics/trends` :
+  - Paramètres : filtres sur zone, période, etc.
+  - Réponse : agrégations et tendances de marché.
+
+Les microservices Java consomment ces endpoints via des **clients HTTP** (OpenFeign ou RestTemplate) et mappent les réponses vers leurs **DTO**.
+
+---
+
+## 5. Lancement du AI Service
+
+### 5.1. Prérequis
+- **Python 3.10+**
+- `pip` ou `pipenv`
+
+### 5.2. Installation et exécution
+
+```bash
+cd ai-service
+pip install -r requirements.txt
+
+# Optionnel : réentraîner les modèles
+python train_pricing.py
+python train_risk_model.py
+
+# Lancement du serveur FastAPI
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 6. Rôle et compétences démontrées
+
+Dans ce service, j’ai :
+- Conçu une **API IA spécialisée** pour un environnement de microservices (contrats clairs, DTO adaptés aux services Java).
+- Intégré des **modèles de Machine Learning** dans un service web (chargement, pré/post-traitement, versionnement).
+- Structuré les **scripts d’entraînement** (`train_pricing.py`, `train_risk_model.py`) pour séparer entraînement et inférence.
+- Assuré l’**interopérabilité** entre le monde Java/Spring et Python/FastAPI (formats JSON, schémas de données, gestion des erreurs).
+- Préparé le projet pour une **industrialisation** : gestion des dépendances, variables d’environnement, endpoints documentés, et séparation claire des responsabilités.
+
+Ce service IA complète l’architecture backend globale en apportant une couche de **décision intelligente** (pricing, recommandation, risque) au-dessus des données métiers gérées par les autres microservices.
