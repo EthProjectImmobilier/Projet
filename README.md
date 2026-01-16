@@ -3,15 +3,35 @@
 # 🏠 RentChain
 ## Plateforme Décentralisée de Location Immobilière
 
-> **Une DApp Web3 complète pour la location immobilière sans intermédiaire, bâtie sur Ethereum Sepolia**
+<blockquote>
+<strong>Une DApp Web3 complète pour la location immobilière sans intermédiaire, bâtie sur Ethereum Sepolia</strong>
+</blockquote>
 
 <br/>
 
-[![Ethereum Sepolia](https://img.shields.io/badge/Ethereum-Sepolia-blue?style=for-the-badge&logo=ethereum)](https://sepolia.etherscan.io/)
-[![React 19](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=spring-boot)](https://spring.io/projects/spring-boot)
-[![Solidity 0.8.28](https://img.shields.io/badge/Solidity-0.8.28-363636?style=for-the-badge&logo=solidity)](https://soliditylang.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
+<div align="center">
+
+<a href="https://sepolia.etherscan.io/" target="_blank">
+    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" width="60" title="Ethereum Sepolia"/>
+</a>
+
+<a href="https://react.dev" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="60" title="React 19"/>
+</a>
+
+<a href="https://spring.io/projects/spring-boot" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="60" title="Spring Boot"/>
+</a>
+
+<a href="https://soliditylang.org" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/solidity/solidity-original.svg" width="60" title="Solidity"/>
+</a>
+
+<a href="https://fastapi.tiangolo.com" target="_blank">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" width="60" title="FastAPI"/>
+</a>
+
+</div>
 
 <br/><br/>
 
@@ -182,19 +202,77 @@ L'application repose sur une **architecture microservices orientée événements
         └──────────────────────────┘
 ```
 
----
+<h2>🛠️ Stack Technologique</h2>
+<div align="center">
 
-## 🛠️ Stack Technologique
+<table width="100%" cellpadding="10">
 
-| Domaine | Technologies |
-|---------|---|
-| **Backend** | ![Java](https://img.shields.io/badge/Java%2021-ED8B00?style=flat-square&logo=java) ![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot%203-6DB33F?style=flat-square&logo=spring) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql) ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=flat-square&logo=rabbitmq) ![Web3j](https://img.shields.io/badge/Web3j-blue?style=flat-square) |
-| **Frontend** | ![React 19](https://img.shields.io/badge/React%2019-61DAFB?style=flat-square&logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript) ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?style=flat-square&logo=tailwindcss) ![ethers.js](https://img.shields.io/badge/ethers.js-8B3885?style=flat-square&logo=ethereum) |
-| **Blockchain** | ![Solidity](https://img.shields.io/badge/Solidity%200.8.28-363636?style=flat-square&logo=solidity) ![Hardhat](https://img.shields.io/badge/Hardhat-yellow?style=flat-square) ![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-4AB0F7?style=flat-square) ![Sepolia](https://img.shields.io/badge/Ethereum%20Sepolia-blue?style=flat-square&logo=ethereum) |
-| **IA/ML** | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi) ![scikit--learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikit-learn) ![XGBoost](https://img.shields.io/badge/XGBoost-orange?style=flat-square) ![Python](https://img.shields.io/badge/Python%203.10-3776AB?style=flat-square&logo=python) |
-| **DevOps/Cloud** | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker) ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes) ![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=jenkins) ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform) ![AWS](https://img.shields.io/badge/AWS-FF9900?style=flat-square&logo=amazonaws) |
+<tr>
+<th>Domaine</th>
+<th>Technologies</th>
+</tr>
 
----
+<tr>
+<td><b>Backend</b></td>
+<td align="center">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="45" title="Java 21"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="45" title="Spring Boot 3"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="45" title="PostgreSQL"/>
+    <img src="https://www.vectorlogo.zone/logos/rabbitmq/rabbitmq-icon.svg" width="45" title="RabbitMQ"/>
+    <img src="https://avatars.githubusercontent.com/u/22267594?s=200&v=4" width="45" title="Web3j"/>
+</td>
+</tr>
+
+<tr>
+<td><b>Frontend</b></td>
+<td align="center">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="45" title="React 19"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="45" title="TypeScript"/>
+    <img src="https://vitejs.dev/logo.svg" width="45" title="Vite"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" width="45" title="TailwindCSS"/>
+    <img src="https://seeklogo.com/images/E/ethers-logo-D5B86204D8-seeklogo.com.png" width="45" title="ethers.js"/>
+</td>
+</tr>
+
+<tr>
+<td><b>Blockchain</b></td>
+<td align="center">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/solidity/solidity-original.svg" width="45" title="Solidity 0.8.28"/>
+    <img src="https://seeklogo.com/images/H/hardhat-logo-888739EBB4-seeklogo.com.png" width="45" title="Hardhat"/>
+    <img src="https://seeklogo.com/images/O/openzeppelin-logo-2909FE553F-seeklogo.com.png" width="45" title="OpenZeppelin"/>
+    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" width="45" title="Ethereum Sepolia"/>
+</td>
+</tr>
+
+<tr>
+<td><b>IA / ML</b></td>
+<td align="center">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="45" title="Python 3.10"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" width="45" title="FastAPI"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Scikit_learn_logo_small.svg" width="60" title="Scikit-learn"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/XGBoost_logo.png" width="60" title="XGBoost"/>
+</td>
+</tr>
+
+<tr>
+<td><b>DevOps / Cloud</b></td>
+<td align="center">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="45" title="Docker"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" width="45" title="Kubernetes"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg" width="45" title="Jenkins"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg" width="45" title="Terraform"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" width="80" title="AWS"/>
+</td>
+</tr>
+
+</table>
+
+<br/>
+
+</div>
+
+
+
 <h2>👥 Les rôles et responsables</h2>
 
 <table align="center" width="100%" cellpadding="10">
