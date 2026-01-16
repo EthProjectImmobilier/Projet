@@ -168,6 +168,15 @@ JWT, OpenZeppelin, ReentrancyGuard, validations
 
 L'application repose sur une **architecture microservices orientée événements** :
 
+![Architecture](./docs/images/architecture.jpeg)
+
+
+Avec un exemple illustrateur 
+
+![exemple illustrateur](./docs/images/illustration.jpeg)
+
+
+
 ```
 ┌──────────────────────────────────┐
 │   Utilisateur (Web/MetaMask)     │
